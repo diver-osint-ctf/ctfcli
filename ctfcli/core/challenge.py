@@ -45,7 +45,7 @@ class Challenge(dict):
         # fmt: off
         "name", "author", "category", "description", "attribution", "value",
         "type", "extra", "image", "protocol", "host",
-        "connection_info", "healthcheck", "attempts", "flags",
+        "connection_info", "healthcheck", "attempts", "flags", "geo_flags",
         "files", "topics", "tags", "files", "hints",
         "requirements", "next", "state", "version",
         # fmt: on
@@ -53,8 +53,8 @@ class Challenge(dict):
 
     keys_with_newline = [
         # fmt: off
-        "extra", "image", "attempts", "flags", "topics", "tags",
-        "files", "hints", "requirements", "state", "version",
+        "extra", "image", "attempts", "flags", "geo_flags", "topics", "tags",
+        "files", "hints", "requirements", "state", "version"
         # fmt: on
     ]
 
@@ -293,6 +293,9 @@ class Challenge(dict):
 
         if "extra" not in ignore:
             challenge_payload = {**challenge_payload, **challenge.get("extra", {})}
+        
+        if "geo_flags" not in ignore:
+            challenge_payload = {**challenge_payload, **challenge.get("geo_flags", {})}
 
         return challenge_payload
 
@@ -567,6 +570,13 @@ class Challenge(dict):
                     challenge["extra"] = {}
 
                 challenge["extra"][key] = challenge_data[key]
+
+        for key in ["latitude", "longitude","tolerance_radius"]:
+            if key in challenge_data:
+                if "geo_flags" not in challenge:
+                    challenge["geo_flags"] = {}
+
+                challenge["geo_flags"][key] = challenge_data[key]
 
         # Add flags
         r = self.api.get(f"/api/v1/challenges/{self.challenge_id}/flags")
