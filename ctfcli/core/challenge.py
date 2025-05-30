@@ -571,7 +571,7 @@ class Challenge(dict):
 
                 challenge["extra"][key] = challenge_data[key]
 
-        for key in ["latitude", "longitude","tolerance_radius"]:
+        for key in ["latitude", "longitude", "tolerance_radius"]:
             if key in challenge_data:
                 if "geo_flags" not in challenge:
                     challenge["geo_flags"] = {}
